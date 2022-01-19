@@ -29,12 +29,13 @@ export default {
         y: 124
       }, {
         id: 'apply',
-        shape: 'customNode',
+        type: 'rect',
         label: '请假申请',
         x: 117,
         y: 122
       }, {
         id: 'approveDept',
+        type: 'rect',
         label: '部门经理审批',
         x: 272,
         y: 122
@@ -46,6 +47,7 @@ export default {
       }, {
         id: 'approveBoss',
         label: '总经理审批',
+        type: 'rect',
         x: 404,
         y: 231
       }],
@@ -61,11 +63,11 @@ export default {
         target: 'decision1'
       }, {
         source: 'decision1',
-        target: 'approveBoss'
+        target: 'approveBoss',
+        label: '>2天'
       }, {
         source: 'approveBoss',
-        target: 'end1',
-        label: '>2天'
+        target: 'end1'
       }, {
         source: 'decision1',
         target: 'end1',
