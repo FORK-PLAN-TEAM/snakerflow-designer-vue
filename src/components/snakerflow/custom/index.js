@@ -1,4 +1,5 @@
 import { h, RectNodeModel, RectNode } from '@logicflow/core'
+import { nodeStyleHandle } from '../tool'
 
 class CustomModel extends RectNodeModel {
   static extendKey = 'CustomModel';
@@ -6,6 +7,11 @@ class CustomModel extends RectNodeModel {
     super(data, graphModel)
     this.width = data.width ? data.width : 120
     this.height = data.height ? data.height : 80
+  }
+
+  getNodeStyle () {
+    const style = super.getNodeStyle()
+    return nodeStyleHandle(this, style)
   }
 }
 

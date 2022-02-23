@@ -18,7 +18,7 @@ import { Snapshot, DndPanel, SelectionSelect, Menu, Control } from '@logicflow/e
 import PropertySetting from '@/components/PropertySetting'
 import '@logicflow/core/dist/style/index.css'
 import '@logicflow/extension/lib/style/index.css'
-const demoData = require('@/components/snakerflow/data.json')
+const demoData = require('@/components/snakerflow/data.json').data
 export default {
   name: 'Home',
   components: {

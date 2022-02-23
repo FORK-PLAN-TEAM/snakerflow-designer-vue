@@ -1,4 +1,5 @@
 import { CircleNode, CircleNodeModel, h } from '@logicflow/core'
+import { nodeStyleHandle } from '../tool'
 
 class EndModel extends CircleNodeModel {
   static extendKey = 'EndModel';
@@ -28,6 +29,11 @@ class EndModel extends CircleNodeModel {
     }
     rules.push(notAsSource)
     return rules
+  }
+
+  getNodeStyle () {
+    const style = super.getNodeStyle()
+    return nodeStyleHandle(this, style)
   }
 }
 

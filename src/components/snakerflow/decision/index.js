@@ -1,4 +1,5 @@
 import { h, PolygonNode, PolygonNodeModel } from '@logicflow/core'
+import { nodeStyleHandle } from '../tool'
 
 class DecisionModel extends PolygonNodeModel {
   static extendKey = 'DecisionModel';
@@ -20,6 +21,11 @@ class DecisionModel extends PolygonNodeModel {
       [25, 50],
       [0, 25]
     ]
+  }
+
+  getNodeStyle () {
+    const style = super.getNodeStyle()
+    return nodeStyleHandle(this, style)
   }
 }
 

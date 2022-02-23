@@ -1,11 +1,16 @@
 import { h, RectNode, RectNodeModel } from '@logicflow/core'
-
+import { nodeStyleHandle } from '../tool'
 class TaskModel extends RectNodeModel {
   static extendKey = 'TaskModel';
   constructor (data, graphModel) {
     super(data, graphModel)
     this.width = data.properties.width ? data.properties.width : 120
     this.height = data.properties.height ? data.properties.height : 80
+  }
+
+  getNodeStyle () {
+    const style = super.getNodeStyle()
+    return nodeStyleHandle(this, style)
   }
 }
 
