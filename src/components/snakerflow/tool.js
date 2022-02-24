@@ -170,7 +170,7 @@ export const logicFlowJsonToSnakerXml = (data) => {
   Object.keys(processObj).forEach(key => {
     const value = processObj[key]
     if (PROCESS_ATTR_KEYS.includes(key) && value) {
-      xml += key + '=' + '"' + textEncode(value) + '" '
+      xml += ' ' + key + '=' + '"' + textEncode(value) + '"'
     }
   })
   xml += '>\n'

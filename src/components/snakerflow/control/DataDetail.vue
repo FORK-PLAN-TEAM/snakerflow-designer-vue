@@ -5,7 +5,7 @@
       <vue-json-pretty  :data="graphData"></vue-json-pretty>
     </el-tab-pane>
     <el-tab-pane label="xml" name="xml">
-      <pre style="text-align:left;">{{xml}}></pre>
+      <pre style="text-align:left;">{{xml}}</pre>
     </el-tab-pane>
     </el-tabs>
   </div>
