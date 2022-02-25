@@ -67,7 +67,7 @@ export default {
     value: {
       handler (n) {
         if (n && n.nodes && this.lf) {
-          this.init()
+          // this.init()
           this.lf.render(n)
         }
       },
