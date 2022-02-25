@@ -6,8 +6,8 @@
 
 <script>
 import SnakerFlowDesigner from '@/components/snakerflow/index'
+import { logicFlowJsonToSnakerXml, snakerXml2LogicFlowJson } from '@/components/snakerflow/tool'
 const demoData = require('@/components/snakerflow/data.json').data
-
 export default {
   name: 'Home',
   components: {
@@ -17,6 +17,9 @@ export default {
     return {
       flowData: demoData
     }
+  },
+  mounted () {
+    this.flowData = snakerXml2LogicFlowJson(logicFlowJsonToSnakerXml(demoData))
   }
 }
 </script>

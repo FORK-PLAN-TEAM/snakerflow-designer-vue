@@ -44,13 +44,116 @@ export const parseXml2Dom = (xml) => {
   }
   return xmlDoc
 }
+// 节点标签
+const NODE_NAMES = ['start', 'task', 'decision', 'end', 'custom', 'join', 'fork']
+// 流程节点属性
+const PROCESS_ATTR_KEYS = ['name', 'displayName', 'instanceUrl', 'expireTime', 'instanceNoClass']
+// 节点属性
+const NODE_ATTR_KEYS = ['name', 'displayName', 'form', 'assignee', 'assignmentHandler', 'taskType', 'performType',
+  'preInterceptors', 'postInterceptors', 'reminderTime', 'reminderRepeat',
+  'expireTime', 'autoExecute', 'callback', 'expr', 'handleClass',
+  'clazz', 'methodName', 'args', 'layout', 'g']
+// 变迁节点属性
+const TRANSITION_ATTR_KEYS = ['name', 'displayName', 'to', 'expr', 'g']
+
 /**
  * 将snaker的定义文件转成LogicFlow支持的数据格式
  * @param {*} xml
  * @returns
  */
 export const snakerXml2LogicFlowJson = (xml) => {
-  return {}
+  const graphData = {
+    nodes: [],
+    edges: []
+  }
+  const xmlDoc = parseXml2Dom(xml)
+  const processDom = xmlDoc.getElementsByTagName('process')
+  if (!processDom.length) {
+    return graphData
+  }
+  let value = null
+  // 解析process属性
+  PROCESS_ATTR_KEYS.forEach(key => {
+    value = processDom[0].getAttribute(key)
+    if (value) {
+      graphData[key] = value
+    }
+  })
+  let nodeEles = null
+  let node = null
+  let lfNode = {}
+  // 解析节点
+  NODE_NAMES.forEach(key => {
+    nodeEles = processDom[0].getElementsByTagName(key)
+    if (nodeEles.length) {
+      for (var i = 0, len = nodeEles.length; i < len; i++) {
+        node = nodeEles[i]
+        lfNode = {
+          type: 'snaker:' + key,
+          properties: {}
+        }
+        // 处理节点
+        NODE_ATTR_KEYS.forEach(attrKey => {
+          value = node.getAttribute(attrKey)
+          if (value) {
+            if (attrKey === 'name') {
+              lfNode.id = value
+            } else if (attrKey === 'layout') {
+              const attr = value.split(',')
+              if (attr.length === 4) {
+                lfNode.x = attr[0]
+                lfNode.y = attr[1]
+                lfNode.properties.width = attr[2] <= 0 ? 100 : attr[2]
+                lfNode.properties.height = attr[3] <= 0 ? 50 : attr[3]
+              }
+            } else if (attrKey === 'displayName') {
+              lfNode.text = value
+            } else {
+              lfNode.properties[attrKey] = value
+            }
+          }
+        })
+        graphData.nodes.push(lfNode)
+        // 处理边
+        let transitionEles = null
+        let transitionEle = null
+        let edge = {}
+        if (key !== 'end') {
+          transitionEles = node.getElementsByTagName('transition')
+          for (var j = 0, lenn = transitionEles.length; j < lenn; j++) {
+            transitionEle = transitionEles[j]
+            edge = {}
+            edge.id = transitionEle.getAttribute('name')
+            edge.type = 'snaker:transition'
+            edge.sourceNodeId = lfNode.id
+            edge.targetNodeId = transitionEle.getAttribute('to')
+            edge.text = {
+              value: transitionEle.getAttribute('displayName') ? transitionEle.getAttribute('displayName') : ''
+            }
+            const g = transitionEle.getAttribute('g')
+            if (g) {
+              const points = g.split(';')
+              if (points.length >= 2) {
+                edge.pointsList = []
+                points.forEach((item) => {
+                  const pointArr = item.split(',')
+                  edge.pointsList.push({
+                    x: Number(pointArr[0]),
+                    y: Number(pointArr[1])
+                  })
+                })
+                edge.startPoint = edge.pointsList[0]
+                edge.endPoint = edge.pointsList[edge.pointsList.length - 1]
+              }
+            }
+            graphData.edges.push(edge)
+          }
+        }
+      }
+    }
+  })
+
+  return graphData
 }
 /**
  * 将LogicFlow的数据转成snaker的定义文件
@@ -62,7 +165,7 @@ export const logicFlowJsonToSnakerXml = (data) => {
   // 先构建成流程对象
   const processObj = {
     name: data.name, // 流程定义名称
-    displayName: data.name, // 流程定义显示名称
+    displayName: data.displayName, // 流程定义显示名称
     instanceUrl: data.instanceUrl, // 实例启动Url
     expireTime: data.expireTime, // 期望完成时间
     instanceNoClass: data.instanceNoClass // 实例编号生成类
@@ -154,17 +257,6 @@ export const logicFlowJsonToSnakerXml = (data) => {
     return ''
   }
   recursionBuildNode(startNode)
-  // 节点标签
-  const NODE_NAMES = ['start', 'task', 'decision', 'end', 'custom', 'join', 'fork']
-  // 流程节点属性
-  const PROCESS_ATTR_KEYS = ['name', 'displayName', 'instanceUrl', 'expireTime', 'instanceNoClass']
-  // 节点属性
-  const NODE_ATTR_KEYS = ['name', 'displayName', 'form', 'assignee', 'assignmentHandler', 'taskType', 'performType',
-    'preInterceptors', 'postInterceptors', 'reminderTime', 'reminderRepeat',
-    'expireTime', 'autoExecute', 'callback', 'expr', 'handleClass',
-    'clazz', 'methodName', 'args']
-  // 变迁节点属性
-  const TRANSITION_ATTR_KEYS = ['name', 'displayName', 'to', 'expr', 'g']
   let xml = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
   xml += '<process '
   Object.keys(processObj).forEach(key => {

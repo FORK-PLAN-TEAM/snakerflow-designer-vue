@@ -13,6 +13,10 @@
             <el-button @click="handleClose">取 消</el-button>
             <el-button type="primary" @click="handleSubmit">确 定</el-button>
         </span>
+        <span slot="footer" class="dialog-footer" v-if="dialogType=='DataDetail'">
+            <el-button type="primary" class="m-btn-copy" :data-clipboard-text="copyJsonContent">复制JSON</el-button>
+            <el-button type="primary" class="m-btn-copy" :data-clipboard-text="copyXmlContent">复制XML</el-button>
+        </span>
         </el-dialog>
   </div>
 </template>
@@ -32,6 +36,9 @@ import ImportData from './control/ImportData.vue'
 import { Snapshot, DndPanel, SelectionSelect, Menu, Control } from '@logicflow/extension'
 import '@logicflow/core/dist/style/index.css'
 import '@logicflow/extension/lib/style/index.css'
+import { snakerXml2LogicFlowJson, logicFlowJsonToSnakerXml } from '@/components/snakerflow/tool'
+import Clipboard from 'clipboard'
+import { Message } from 'element-ui'
 export default {
   name: 'SnakerFlowDesigner',
   components: {
@@ -62,7 +69,8 @@ export default {
       dialogTitle: '',
       dialogVisible: false,
       dialogType: 'DataDetail',
-      graphData: {}
+      graphData: {},
+      clipboard: null
     }
   },
   watch: {
@@ -76,11 +84,34 @@ export default {
       deep: true
     }
   },
+  computed: {
+    copyJsonContent () {
+      if (this.dialogType === 'DataDetail' && this.lf) {
+        return JSON.stringify(this.lf.getGraphData(), null, 2)
+      }
+      return ''
+    },
+    copyXmlContent () {
+      if (this.dialogType === 'DataDetail' && this.lf) {
+        return logicFlowJsonToSnakerXml(this.lf.getGraphData())
+      }
+      return ''
+    }
+  },
   mounted () {
     this.init()
     if (this.value) {
       this.lf.render(this.value)
     }
+    this.clipboard = new Clipboard('.m-btn-copy')
+    this.clipboard.on('success', function (e) {
+      Message.success('复制成功')
+      e.clearSelection()
+    })
+
+    this.clipboard.on('error', function (e) {
+      Message.error('复制失败')
+    })
   },
   methods: {
     init () {
@@ -163,7 +194,10 @@ export default {
         title: '',
         text: '查看',
         onClick: (lf, ev) => {
-          this.graphData = lf.getGraphData()
+          this.graphData = {
+            ...this.value,
+            ...lf.getGraphData()
+          }
           this.$nextTick(() => {
             this.dialogTitle = '查看流程数据'
             this.dialogVisible = true
@@ -177,7 +211,7 @@ export default {
         title: '',
         text: '导入',
         onClick: (lf, ev) => {
-          this.dialogTitle = '导入流程数据'
+          this.dialogTitle = '导入流程数据(同时支持xml/json)'
           this.dialogVisible = true
           this.dialogType = 'ImportData'
         }
@@ -210,7 +244,7 @@ export default {
           this.$refs.propertySetting.show()
         })
       })
-      // 画布上的元素发生变化时会触发
+      // 画布上的元素发生变化时会触发-有bug，先注释
       // eventCenter.on('history:change', ({ data }) => {
       //   if (data.undos.length) {
       //     this.$emit('input', {
@@ -226,8 +260,13 @@ export default {
     },
     handleSubmit () {
       if (this.dialogType === 'ImportData') {
-        const data = JSON.parse(this.$refs.dialogComponent.graphJsonStr)
-        this.lf.render(data.data ? data.data : data)
+        try {
+          const data = JSON.parse(this.$refs.dialogComponent.graphJsonStr)
+          this.lf.render(data.data ? data.data : data)
+        } catch {
+          const data = snakerXml2LogicFlowJson(this.$refs.dialogComponent.graphJsonStr)
+          this.lf.render(data)
+        }
       }
       this.dialogVisible = false
     }
