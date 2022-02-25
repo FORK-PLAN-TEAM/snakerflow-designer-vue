@@ -5,8 +5,8 @@ class CustomModel extends RectNodeModel {
   static extendKey = 'CustomModel';
   constructor (data, graphModel) {
     super(data, graphModel)
-    this.width = data.width ? data.width : 120
-    this.height = data.height ? data.height : 80
+    this.width = data.properties.width ? data.properties.width : 120
+    this.height = data.properties.height ? data.properties.height : 80
   }
 
   getNodeStyle () {

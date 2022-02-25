@@ -101,7 +101,7 @@ export const logicFlowJsonToSnakerXml = (data) => {
     }).map(edge => {
       return {
         name: edge.id,
-        displayName: edge.text instanceof String ? edge.text : edge.text.value,
+        displayName: (edge.text instanceof String || edge.text === undefined) ? edge.text : edge.text.value,
         to: edge.targetNodeId, // 目地节点id
         expr: edge.properties.expr, // 表达式
         g: edge.pointsList.map(point => { // 转换点集合
@@ -118,7 +118,7 @@ export const logicFlowJsonToSnakerXml = (data) => {
   const buildNode = (node) => {
     return {
       name: node.id,
-      displayName: node.text instanceof String ? node.text : node.text.value,
+      displayName: (node.text instanceof String || node.text === undefined) ? node.text : node.text.value,
       layout: node.x + ',' + node.y + ',' + node.properties.width + ',' + node.properties.height,
       ...node.properties,
       transition: getTransitions(node.id)

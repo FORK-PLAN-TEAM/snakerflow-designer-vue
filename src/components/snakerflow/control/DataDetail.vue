@@ -29,13 +29,12 @@ export default {
   },
   data () {
     return {
-      activeName: 'json'
+      activeName: 'json',
+      xml: ''
     }
   },
-  computed: {
-    xml () {
-      return logicFlowJsonToSnakerXml(this.graphData)
-    }
+  mounted () {
+    this.xml = logicFlowJsonToSnakerXml(this.graphData)
   },
   methods: {
     handleSubmit () {},
