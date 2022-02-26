@@ -2,7 +2,7 @@
   <div>
       <el-drawer
         ref="drawer"
-        title="设置节点属性"
+        :title="title"
         destroy-on-close
         :visible.sync="drawer"
         direction="rtl"
@@ -20,6 +20,7 @@ import SnakerCustom from './custom'
 import SnakerDecision from './decision'
 import SnakerTask from './task'
 import SnakerTransition from './transition'
+import SnakerProcess from './process'
 
 export default {
   components: {
@@ -28,9 +29,16 @@ export default {
     SnakerCustom,
     SnakerDecision,
     SnakerTask,
-    SnakerTransition
+    SnakerTransition,
+    SnakerProcess
   },
   props: {
+    value: {
+      type: Object,
+      default () {
+        return {}
+      }
+    },
     node: {
       type: Object,
       default () {
@@ -51,25 +59,53 @@ export default {
       nodeId: undefined
     }
   },
+  computed: {
+    title () {
+      if (this.node && this.node.type === 'snaker:transition') {
+        return '设置边属性'
+      } else if (this.node && this.node.type === 'snaker:process') {
+        return '设置流程属性'
+      }
+      return '设置节点属性'
+    }
+  },
   watch: {
     node (n) {
       if (n) {
-        this.nodeId = n.id
-        this.form = {
-          name: n.id,
-          displayName: n.text instanceof Object ? n.text.value : n.text,
-          ...n.properties
+        if (n.type === 'snaker:process') {
+          this.form = n
+        } else {
+          this.nodeId = n.id
+          this.form = {
+            name: n.id,
+            displayName: n.text instanceof Object ? n.text.value : n.text,
+            ...n.properties
+          }
         }
       }
     },
     'form.name' (n) {
       // 监听名称变量并更新
-      this.lf.changeNodeId(this.nodeId, n)
-      this.nodeId = n
+      if (this.node.type === 'snaker:process') {
+        this.$emit('input', {
+          ...this.value,
+          name: n
+        })
+      } else {
+        this.lf.changeNodeId(this.nodeId, n)
+        this.nodeId = n
+      }
     },
     'form.displayName' (n) {
       // 监听显示名称变化并更新
-      this.lf.updateText(this.nodeId, n)
+      if (this.node.type === 'snaker:process') {
+        this.$emit('input', {
+          ...this.value,
+          displayName: n
+        })
+      } else {
+        this.lf.updateText(this.nodeId, n)
+      }
     },
     'form.form' (n) {
       // 监听表单属性变化并更新
@@ -127,9 +163,16 @@ export default {
     },
     'form.expireTime' (n) {
       // 监听期待完成时间属性变化并更新
-      this.lf.setProperties(this.nodeId, {
-        expireTime: n
-      })
+      if (this.node.type === 'snaker:process') {
+        this.$emit('input', {
+          ...this.value,
+          expireTime: n
+        })
+      } else {
+        this.lf.setProperties(this.nodeId, {
+          expireTime: n
+        })
+      }
     },
     'form.autoExecute' (n) {
       // 监听是否自动完成属性变化并更新
@@ -171,6 +214,20 @@ export default {
       // 监听参数变量属性变化并更新
       this.lf.setProperties(this.nodeId, {
         args: n
+      })
+    },
+    'form.instanceUrl' (n) {
+      // 监听流程实例启动Url变量属性变化并更新
+      this.$emit('input', {
+        ...this.value,
+        instanceUrl: n
+      })
+    },
+    'form.instanceNoClass' (n) {
+      // 监听流程实例编号生成类变量属性变化并更新
+      this.$emit('input', {
+        ...this.value,
+        instanceNoClass: n
       })
     }
   },

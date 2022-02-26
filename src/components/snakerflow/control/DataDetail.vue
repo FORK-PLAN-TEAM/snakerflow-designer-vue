@@ -2,7 +2,7 @@
   <div style="height: 60vh;overflow-y:scroll;">
     <el-tabs v-model="activeName">
     <el-tab-pane label="json" name="json">
-      <vue-json-pretty  :data="graphData"></vue-json-pretty>
+      <vue-json-pretty  :data="json"></vue-json-pretty>
     </el-tab-pane>
     <el-tab-pane label="xml" name="xml">
       <pre style="text-align:left;">{{xml}}</pre>
@@ -29,12 +29,28 @@ export default {
   },
   data () {
     return {
-      activeName: 'json',
-      xml: ''
+      activeName: 'json'
     }
   },
-  mounted () {
-    this.xml = logicFlowJsonToSnakerXml(this.graphData)
+  computed: {
+    xml () {
+      return logicFlowJsonToSnakerXml(this.graphData)
+    },
+    json () {
+      const processAttr = {}
+      const PROCESS_ATTR_KEYS = ['name', 'displayName', 'expireTime', 'instanceUrl', 'instanceNoClass']
+      PROCESS_ATTR_KEYS.forEach(key => {
+        if (!this.graphData[key]) {
+          delete this.graphData[key]
+        } else {
+          processAttr[key] = this.graphData[key]
+        }
+      })
+      return {
+        ...processAttr,
+        ...this.graphData
+      }
+    }
   },
   methods: {
     handleSubmit () {},

@@ -1,7 +1,7 @@
 <template>
   <div class="m-snakerflow-designer">
     <div id="LF-view"></div>
-    <PropertySetting ref="propertySetting" :node="nodeClick" :lf="lf"/>
+    <PropertySetting ref="propertySetting" :node="nodeClick" v-model="processForm" :lf="lf"/>
     <el-dialog
         :title="dialogTitle"
         :visible.sync="dialogVisible"
@@ -70,7 +70,8 @@ export default {
       dialogVisible: false,
       dialogType: 'DataDetail',
       graphData: {},
-      clipboard: null
+      clipboard: null,
+      processForm: {}
     }
   },
   watch: {
@@ -78,7 +79,23 @@ export default {
       handler (n) {
         if (n && n.nodes && this.lf) {
           // this.init()
+          this.processForm.type = 'snaker:process'
+          this.processForm.name = n.name
+          this.processForm.displayName = n.displayName
+          this.processForm.expireTime = n.expireTime
+          this.processForm.instanceUrl = n.instanceUrl
+          this.processForm.instanceUrl = n.instanceUrl
+          this.processForm.instanceNoClass = n.instanceNoClass
           this.lf.render(n)
+        }
+      },
+      deep: true
+    },
+    processForm: {
+      handler (n) {
+        if (n) {
+          delete n.type
+          this.$emit('input', n)
         }
       },
       deep: true
@@ -87,13 +104,19 @@ export default {
   computed: {
     copyJsonContent () {
       if (this.dialogType === 'DataDetail' && this.lf) {
-        return JSON.stringify(this.lf.getGraphData(), null, 2)
+        return JSON.stringify({
+          ...this.value,
+          ...this.lf.getGraphData()
+        }, null, 2)
       }
       return ''
     },
     copyXmlContent () {
       if (this.dialogType === 'DataDetail' && this.lf) {
-        return logicFlowJsonToSnakerXml(this.lf.getGraphData())
+        return logicFlowJsonToSnakerXml({
+          ...this.value,
+          ...this.lf.getGraphData()
+        })
       }
       return ''
     }
@@ -141,6 +164,7 @@ export default {
         },
         {
           type: 'snaker:task',
+          text: '用户任务',
           label: '用户任务',
           properties: {},
           icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAEFVwZaAAAABGdBTUEAALGPC/xhBQAAAqlJREFUOBF9VM9rE0EUfrMJNUKLihGbpLGtaCOIR8VjQMGDePCgCCIiCNqzCAp2MyYUCXhUtF5E0D+g1t48qAd7CCLqQUQKEWkStcEfVGlLdp/fm3aW2QQdyLzf33zz5m2IsAZ9XhDpyaaIZkTS4ASzK41TFao88GuJ3hsr2pAbipHxuSYyKRugagICGANkfFnNh3HeE2N0b3nN2cgnpcictw5veJIzxmDamSlxxQZicq/mflxhbaH8BLRbuRwNtZp0JAhoplVRUdzmCe/vO27wFuuA3S5qXruGdboy5/PRGFsbFGKo/haRtQHIrM83bVeTrOgNhZReWaYGnE4aUQgTJNvijJFF4jQ8BxJE5xfKatZWmZcTQ+BVgh7s8SgPlCkcec4mGTmieTP4xd7PcpIEg1TX6gdeLW8rTVMVLVvb7ctXoH0Cydl2QOPJBG21STE5OsnbweVYzAnD3A7PVILuY0yiiyDwSm2g441r6rMSgp6iK42yqroI2QoXeJVeA+YeZSa47gZdXaZWQKTrG93rukk/l2Al6Kzh5AZEl7dDQy+JjgFahQjRopSxPbrbvK7GRe9ePWBo1wcU7sYrFZtavXALwGw/7Dnc50urrHJuTPSoO2IMV3gUQGNg87IbSOIY9BpiT9HV7FCZ94nPXb3MSnwHn/FFFE1vG6DTby+r31KAkUktB3Qf6ikUPWxW1BkXSPQeMHHiW0+HAd2GelJsZz1OJegCxqzl+CLVHa/IibuHeJ1HAKzhuDR+ymNaRFM+4jU6UWKXorRmbyqkq/D76FffevwdCp+jN3UAN/C9JRVTDuOxC/oh+EdMnqIOrlYteKSfadVRGLJFJPSB/ti/6K8f0CNymg/iH2gO/f0DwE0yjAFO6l8JaR5j0VPwPwfaYHqOqrCI319WzwhwzNW/aQAAAABJRU5ErkJggg==',
@@ -148,6 +172,7 @@ export default {
         },
         {
           type: 'snaker:custom',
+          text: '自定义任务',
           label: '自定义任务',
           properties: {},
           icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAAH6ji2bAAAABGdBTUEAALGPC/xhBQAAAOVJREFUOBGtVMENwzAIjKP++2026ETdpv10iy7WFbqFyyW6GBywLCv5gI+Dw2Bluj1znuSjhb99Gkn6QILDY2imo60p8nsnc9bEo3+QJ+AKHfMdZHnl78wyTnyHZD53Zzx73MRSgYvnqgCUHj6gwdck7Zsp1VOrz0Uz8NbKunzAW+Gu4fYW28bUYutYlzSa7B84Fh7d1kjLwhcSdYAYrdkMQVpsBr5XgDGuXwQfQr0y9zwLda+DUYXLaGKdd2ZTtvbolaO87pdo24hP7ov16N0zArH1ur3iwJpXxm+v7oAJNR4JEP8DoAuSFEkYH7cAAAAASUVORK5CYII=',
@@ -240,6 +265,19 @@ export default {
       })
       eventCenter.on('edge:click', (args) => {
         this.nodeClick = args.data
+        this.$nextTick(() => {
+          this.$refs.propertySetting.show()
+        })
+      })
+      eventCenter.on('blank:contextmenu', (args) => {
+        this.nodeClick = {
+          name: this.processForm.name,
+          displayName: this.processForm.displayName,
+          expireTime: this.processForm.expireTime,
+          instanceUrl: this.processForm.instanceUrl,
+          instanceNoClass: this.processForm.instanceNoClass,
+          type: 'snaker:process'
+        }
         this.$nextTick(() => {
           this.$refs.propertySetting.show()
         })
