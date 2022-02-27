@@ -60,6 +60,10 @@ export default {
           grid: true
         }
       }
+    },
+    viewer: { // 预览模式
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -124,6 +128,7 @@ export default {
   mounted () {
     this.init()
     if (this.value) {
+      this.initProcessForm(this.value)
       this.lf.render(this.value)
     }
     this.clipboard = new Clipboard('.m-btn-copy')
@@ -137,6 +142,18 @@ export default {
     })
   },
   methods: {
+    /**
+     * 初始化流程定义表单信息
+     */
+    initProcessForm (data) {
+      this.processForm.type = 'snaker:process'
+      this.processForm.name = data.name
+      this.processForm.displayName = data.displayName
+      this.processForm.expireTime = data.expireTime
+      this.processForm.instanceUrl = data.instanceUrl
+      this.processForm.instanceUrl = data.instanceUrl
+      this.processForm.instanceNoClass = data.instanceNoClass
+    },
     init () {
       // 画布配置
       LogicFlow.use(Snapshot)
@@ -144,7 +161,11 @@ export default {
       LogicFlow.use(SelectionSelect)
       LogicFlow.use(Menu)
       LogicFlow.use(Control)
-      const lf = new LogicFlow({ ...this.config, container: document.querySelector('#LF-view') })
+      const defaultConfig = {}
+      if (this.viewer) {
+        defaultConfig.isSilentMode = true
+      }
+      const lf = new LogicFlow({ ...this.config, ...defaultConfig, container: document.querySelector('#LF-view') })
       this.lf = lf
       // 注册自定义元素
       this.lf.register(Task)
@@ -153,6 +174,13 @@ export default {
       this.lf.register(Start)
       this.lf.register(End)
       this.lf.register(Decision)
+      // 初始化操作栏
+      this.initOp(this.lf)
+      // 初始化事件
+      this.initEvent(lf)
+    },
+    initOp (lf) {
+      if (this.viewer) return
       // 设置拖拽面板
       this.lf.extension.dndPanel.setPatternItems([
         {
@@ -249,13 +277,20 @@ export default {
         onClick: (lf, ev) => {
           this.graphData = lf.getGraphData()
           this.$nextTick(() => {
-            console.log({
+            const res = {
               ...this.value,
               ...this.graphData
+            }
+            this.$emit('on-save', {
+              json: res,
+              xml: logicFlowJsonToSnakerXml(res)
             })
           })
         }
       })
+    },
+    initEvent (lf) {
+      if (this.viewer) return
       const { eventCenter } = this.lf.graphModel
       eventCenter.on('node:click', (args) => {
         this.nodeClick = args.data
@@ -282,15 +317,6 @@ export default {
           this.$refs.propertySetting.show()
         })
       })
-      // 画布上的元素发生变化时会触发-有bug，先注释
-      // eventCenter.on('history:change', ({ data }) => {
-      //   if (data.undos.length) {
-      //     this.$emit('input', {
-      //       ...this.value,
-      //       ...data.undos[data.undos.length - 1]
-      //     })
-      //   }
-      // })
     },
     handleClose () {
       this.dialogVisible = false
@@ -299,14 +325,28 @@ export default {
     handleSubmit () {
       if (this.dialogType === 'ImportData') {
         try {
-          const data = JSON.parse(this.$refs.dialogComponent.graphJsonStr)
-          this.lf.render(data.data ? data.data : data)
+          this.importJson(this.$refs.dialogComponent.graphJsonStr)
         } catch {
-          const data = snakerXml2LogicFlowJson(this.$refs.dialogComponent.graphJsonStr)
-          this.lf.render(data)
+          this.importXml(this.$refs.dialogComponent.graphJsonStr)
         }
       }
       this.dialogVisible = false
+    },
+    /**
+     * 导入snakerxml
+     */
+    importXml (xml) {
+      const data = snakerXml2LogicFlowJson(xml)
+      this.initProcessForm(data)
+      this.lf.render(data)
+    },
+    /**
+     * 导入jsonstr
+     */
+    importJson (jsonStr) {
+      const data = JSON.parse(jsonStr)
+      this.initProcessForm(data)
+      this.lf.render(data)
     }
   }
 }
