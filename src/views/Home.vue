@@ -14,7 +14,7 @@ export default {
   },
   data () {
     return {
-      flowData: demoData,
+      flowData: window.localStorage.getItem('LFDATA') ? JSON.parse(window.localStorage.getItem('LFDATA')) : demoData,
       isIFrame: window.parent !== window
     }
   },
@@ -52,7 +52,7 @@ export default {
           xml: data.xml
         }, '*')
       } else {
-        console.log(data)
+        window.localStorage.setItem('LFDATA', JSON.stringify(data.json))
       }
     }
   }

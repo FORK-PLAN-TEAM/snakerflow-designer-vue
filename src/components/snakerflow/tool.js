@@ -222,7 +222,7 @@ export const logicFlowJsonToSnakerXml = (data) => {
     return {
       name: node.id,
       displayName: (node.text instanceof String || node.text === undefined) ? node.text : node.text.value,
-      layout: node.x + ',' + node.y + ',' + node.properties.width + ',' + node.properties.height,
+      layout: node.x + ',' + node.y + ',' + (node.properties.width ? node.properties.width : '120') + ',' + (node.properties.height ? node.properties.height : '80'),
       ...node.properties,
       transition: getTransitions(node.id)
     }
@@ -241,15 +241,17 @@ export const logicFlowJsonToSnakerXml = (data) => {
   }
   /**
    * 递归构建节点属性
-   * @param {}} node
+   * @param {} node
    */
   const recursionBuildNode = (node) => {
     const nodeName = node.type.replace('snaker:', '')
-    processObj[nodeName + '_' + node.id] = buildNode(node)
-    const nextNodes = getNextNodes(node.id)
-    nextNodes.forEach(nextNode => {
-      recursionBuildNode(nextNode)
-    })
+    if (!processObj[nodeName + '_' + node.id]) {
+      processObj[nodeName + '_' + node.id] = buildNode(node)
+      const nextNodes = getNextNodes(node.id)
+      nextNodes.forEach(nextNode => {
+        recursionBuildNode(nextNode)
+      })
+    }
   }
   const startNode = getStartNode()
   if (!startNode) {

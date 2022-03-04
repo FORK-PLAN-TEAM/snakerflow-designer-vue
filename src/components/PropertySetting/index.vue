@@ -84,7 +84,7 @@ export default {
         }
       }
     },
-    'form.name' (n) {
+    'form.name' (n, o) {
       // 监听名称变量并更新
       if (this.node.type === 'snaker:process') {
         this.$emit('input', {
@@ -92,8 +92,20 @@ export default {
           name: n
         })
       } else {
-        this.lf.changeNodeId(this.nodeId, n)
-        this.nodeId = n
+        if (n && o) {
+          if (['snaker:transition'].includes(this.node.type)) {
+            if (!this.lf.getEdgeDataById(n)) {
+              this.lf.changeEdgeId(o, n)
+            }
+          } else if (['snaker:decision'].includes(this.node.type)) {
+            this.lf.changeNodeId(o, n)
+          } else {
+            if (!this.lf.getNodeDataById(n)) {
+              this.lf.changeNodeId(o, n)
+            }
+          }
+          this.nodeId = n
+        }
       }
     },
     'form.displayName' (n) {

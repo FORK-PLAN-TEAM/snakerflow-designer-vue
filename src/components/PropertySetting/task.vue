@@ -24,7 +24,7 @@
       </el-form-item>
       <el-form-item label="参与类型">
         <el-select v-model="form.performType">
-          <el-option value="ANY" label="普通参数"></el-option>
+          <el-option value="ANY" label="普通参与"></el-option>
           <el-option value="ALL" label="会签参与"></el-option>
         </el-select>
       </el-form-item>

@@ -304,6 +304,10 @@ export default {
           this.$refs.propertySetting.show()
         })
       })
+      eventCenter.on('edge:add', (args) => {
+        // 修改边类型
+        lf.changeEdgeType(args.data.id, 'snaker:transition')
+      })
       eventCenter.on('blank:contextmenu', (args) => {
         this.nodeClick = {
           name: this.processForm.name,
