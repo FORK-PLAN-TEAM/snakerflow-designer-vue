@@ -130,6 +130,11 @@ export const snakerXml2LogicFlowJson = (xml) => {
             edge.text = {
               value: transitionEle.getAttribute('displayName') ? transitionEle.getAttribute('displayName') : ''
             }
+            edge.properties = {}
+            const expr = transitionEle.getAttribute('expr')
+            if (expr) {
+              edge.properties.expr = expr
+            }
             const g = transitionEle.getAttribute('g')
             if (g) {
               const points = g.split(';')
