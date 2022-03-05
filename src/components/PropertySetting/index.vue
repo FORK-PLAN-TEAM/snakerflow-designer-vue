@@ -21,6 +21,8 @@ import SnakerDecision from './decision'
 import SnakerTask from './task'
 import SnakerTransition from './transition'
 import SnakerProcess from './process'
+import SnakerJoin from './join'
+import SnakerFork from './fork'
 
 export default {
   components: {
@@ -30,7 +32,9 @@ export default {
     SnakerDecision,
     SnakerTask,
     SnakerTransition,
-    SnakerProcess
+    SnakerProcess,
+    SnakerJoin,
+    SnakerFork
   },
   props: {
     value: {
