@@ -328,6 +328,7 @@ export default {
     },
     handleSubmit () {
       if (this.dialogType === 'ImportData') {
+        this.lf.clearData()
         try {
           this.importJson(this.$refs.dialogComponent.graphJsonStr)
         } catch {
