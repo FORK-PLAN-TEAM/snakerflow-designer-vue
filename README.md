@@ -5,23 +5,21 @@
 npm install
 ```
 
-### 开发
+## 开发
 ```
 npm run serve
 ```
 
-### 打包编译
+## 打包编译
 ```
 npm run build
 ```
 
-### 校验
+## 校验
 ```
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
 ## 截图
 ![1](./doc/images/1.png)
 
