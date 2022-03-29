@@ -40,4 +40,4 @@ npm run lint
 
 [snaker工作流中文文档] (https://yunmel.gitbooks.io/snakerflow/content/)
 
-[snaker源码] (https://gitee.com/mthird-party/snakerflow)
+[snaker源码] (https://gitee.com/yuqs/snakerflow)
