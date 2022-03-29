@@ -113,6 +113,20 @@ export const snakerXml2LogicFlowJson = (xml) => {
             }
           }
         })
+        // 处理扩展属性
+        if (key === 'task') {
+          const fieldEles = node.getElementsByTagName('field')
+          if (fieldEles.length) {
+            const fieldEle = fieldEles[0]
+            const field = {
+            }
+            const attr = fieldEle.getElementsByTagName('attr')
+            for (var iii = 0; iii < attr.length; iii++) {
+              field[attr[iii].getAttribute('name')] = attr[iii].getAttribute('value')
+            }
+            lfNode.properties.field = field
+          }
+        }
         graphData.nodes.push(lfNode)
         // 处理边
         let transitionEles = null
@@ -166,6 +180,7 @@ export const snakerXml2LogicFlowJson = (xml) => {
  * @returns
  */
 export const logicFlowJsonToSnakerXml = (data) => {
+  let xml = ''
   // data的数据由流程定义文件信息+logicFlow数据构成
   // 先构建成流程对象
   const processObj = {
@@ -224,12 +239,26 @@ export const logicFlowJsonToSnakerXml = (data) => {
    * @returns
    */
   const buildNode = (node) => {
+    let field
+    if (node.properties.field && Object.keys(node.properties.field).length) {
+      field = {
+        name: 'ext',
+        displayName: '扩展属性',
+        attr: Object.keys(node.properties.field).map(key => {
+          return {
+            name: key,
+            value: node.properties.field[key]
+          }
+        })
+      }
+    }
     return {
       name: node.id,
       displayName: (node.text instanceof String || node.text === undefined) ? node.text : node.text.value,
       layout: node.x + ',' + node.y + ',' + (node.properties.width ? node.properties.width : '120') + ',' + (node.properties.height ? node.properties.height : '80'),
       ...node.properties,
-      transition: getTransitions(node.id)
+      transition: getTransitions(node.id),
+      field
     }
   }
   /**
@@ -264,7 +293,7 @@ export const logicFlowJsonToSnakerXml = (data) => {
     return ''
   }
   recursionBuildNode(startNode)
-  let xml = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
+  xml = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
   xml += '<process '
   Object.keys(processObj).forEach(key => {
     const value = processObj[key]
@@ -299,6 +328,13 @@ export const logicFlowJsonToSnakerXml = (data) => {
           xml += '>'
           xml += '</transition>\n'
         })
+      }
+      if (value.field && nodeName === 'task') {
+        xml += '\t<field name="' + value.field.name + '" displayName="' + value.field.displayName + '">\n'
+        value.field.attr.forEach(attrItem => {
+          xml += '\t\t<attr name="' + attrItem.name + '" value="' + textEncode(attrItem.value) + '"></attr>\n'
+        })
+        xml += '\t</field>\n'
       }
       xml += '\t</' + nodeName + '>\n'
     }

@@ -52,6 +52,28 @@
       <el-form-item label="回调处理">
         <el-input v-model="form.callback"></el-input>
       </el-form-item>
+      <el-card>
+        <div slot="header" class="clearfix">
+          <span>扩展属性</span>
+          <el-button style="float: right; padding: 3px 0" type="text" @click="handleAddFieldAttr">添加</el-button>
+        </div>
+        <div>
+         <el-row v-for="item in attrList" :key="item.key" style="margin-bottom: 12px;">
+           <el-col :span="10" style="height: 32px;display: flex;align-items: center;position: relative;z-index: 99999;">
+             <div @click="handleDbClick(item.key)">
+               <el-input :ref="item.key" v-model="attrKey" size="small" v-if="attrKey && attrKey==item.key" @blur="handleAttrKeyBlur"/>
+               <span v-else>{{item.key}}</span>
+             </div>
+           </el-col>
+           <el-col :span="12">
+             <el-input v-model="field[item.key]" size="small"></el-input>
+           </el-col>
+           <el-col :span="2" style="height: 32px;display: flex;align-items: center;padding-left: 10px;">
+             <i class="el-icon-remove" @click="handleRemoveFieldAttr(item.key)"></i>
+           </el-col>
+         </el-row>
+        </div>
+      </el-card>
     </el-form>
   </div>
 </template>
@@ -68,7 +90,22 @@ export default {
   },
   data () {
     return {
-      form: this.value
+      form: this.value,
+      attrKey: '',
+      field: this.value.field || {}
+    }
+  },
+  computed: {
+    attrList () {
+      if (!this.field) {
+        return []
+      }
+      return Object.keys(this.field).map(key => {
+        return {
+          key: key,
+          value: this.field[key]
+        }
+      })
     }
   },
   watch: {
@@ -77,6 +114,29 @@ export default {
         this.$emit('change', n)
       },
       deep: true
+    },
+    field: {
+      handler (n) {
+        this.$set(this.form, 'field', JSON.parse(JSON.stringify(this.field)))
+      },
+      deep: true
+    }
+  },
+  methods: {
+    handleAddFieldAttr () {
+      this.$set(this.field, 'attr' + (this.attrList.length + 1), '')
+    },
+    handleRemoveFieldAttr (key) {
+      this.$delete(this.field, key)
+    },
+    handleDbClick (key) {
+      this.attrKey = key
+      this.$nextTick(() => {
+        this.$refs[key][0].focus()
+      })
+    },
+    handleAttrKeyBlur () {
+      this.attrKey = ''
     }
   }
 }

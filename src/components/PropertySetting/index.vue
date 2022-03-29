@@ -245,6 +245,12 @@ export default {
         ...this.value,
         instanceNoClass: n
       })
+    },
+    'form.field' (n) {
+      // 监听扩展属性变化并更新
+      this.lf.setProperties(this.nodeId, {
+        field: n
+      })
     }
   },
   methods: {
