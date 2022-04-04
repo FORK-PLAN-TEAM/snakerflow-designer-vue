@@ -52,6 +52,7 @@ export default {
           xml: data.xml
         }, '*')
       } else {
+        this.$message.success('保存本地成功')
         window.localStorage.setItem('LFDATA', JSON.stringify(data.json))
       }
     }

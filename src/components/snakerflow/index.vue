@@ -85,13 +85,7 @@ export default {
       handler (n) {
         if (n && n.nodes && this.lf) {
           // this.init()
-          this.processForm.type = 'snaker:process'
-          this.processForm.name = n.name
-          this.processForm.displayName = n.displayName
-          this.processForm.expireTime = n.expireTime
-          this.processForm.instanceUrl = n.instanceUrl
-          this.processForm.instanceUrl = n.instanceUrl
-          this.processForm.instanceNoClass = n.instanceNoClass
+          this.initProcessForm(n)
           this.lf.render(n)
         }
       },
@@ -148,13 +142,12 @@ export default {
      * 初始化流程定义表单信息
      */
     initProcessForm (data) {
-      this.processForm.type = 'snaker:process'
-      this.processForm.name = data.name
-      this.processForm.displayName = data.displayName
-      this.processForm.expireTime = data.expireTime
-      this.processForm.instanceUrl = data.instanceUrl
-      this.processForm.instanceUrl = data.instanceUrl
-      this.processForm.instanceNoClass = data.instanceNoClass
+      this.$set(this.processForm, 'type', 'snaker:process')
+      this.$set(this.processForm, 'name', data.name)
+      this.$set(this.processForm, 'displayName', data.displayName)
+      this.$set(this.processForm, 'expireTime', data.expireTime)
+      this.$set(this.processForm, 'instanceUrl', data.instanceUrl)
+      this.$set(this.processForm, 'instanceNoClass', data.instanceNoClass)
     },
     init () {
       // 画布配置
