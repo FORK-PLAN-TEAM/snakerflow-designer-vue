@@ -9,7 +9,7 @@
         width="60%"
         :before-close="handleClose">
         <component :is="dialogType" :graphData="graphData" ref="dialogComponent"></component>
-        <span slot="footer" class="dialog-footer" v-if="dialogType=='ImportData'">
+        <span slot="footer" class="dialog-footer" v-if="dialogType=='ImportData' || dialogType=='HighLightData'">
             <el-button @click="handleClose">取 消</el-button>
             <el-button type="primary" @click="handleSubmit">确 定</el-button>
         </span>
@@ -35,6 +35,8 @@ import Fork from '@/components/snakerflow/fork'
 import PropertySetting from '@/components/PropertySetting'
 import DataDetail from './control/DataDetail.vue'
 import ImportData from './control/ImportData.vue'
+import HighLightData from './control/HighLightData.vue'
+
 import { Snapshot, DndPanel, SelectionSelect, Menu, Control } from '@logicflow/extension'
 import '@logicflow/core/dist/style/index.css'
 import '@logicflow/extension/lib/style/index.css'
@@ -46,7 +48,8 @@ export default {
   components: {
     PropertySetting,
     DataDetail,
-    ImportData
+    ImportData,
+    HighLightData
   },
   props: {
     value: {
@@ -278,6 +281,17 @@ export default {
           this.dialogType = 'ImportData'
         }
       })
+      // 控制面板-设置高亮数据
+      this.lf.extension.control.addItem({
+        iconClass: 'lf-control-setting',
+        title: '',
+        text: '设置高亮',
+        onClick: (lf, ev) => {
+          this.dialogTitle = '导入高亮数据(json)'
+          this.dialogVisible = true
+          this.dialogType = 'HighLightData'
+        }
+      })
       // 控制面板-清空画布
       this.lf.extension.control.addItem({
         iconClass: 'lf-control-save',
@@ -343,6 +357,8 @@ export default {
         } catch {
           this.importXml(this.$refs.dialogComponent.graphJsonStr)
         }
+      } else if (this.dialogType === 'HighLightData') {
+        this.setHighLight(JSON.parse(this.$refs.dialogComponent.highLightJsonStr))
       }
       this.dialogVisible = false
     },
@@ -361,6 +377,33 @@ export default {
       const data = JSON.parse(jsonStr)
       this.initProcessForm(data)
       this.lf.render(data)
+    },
+    /**
+     * 设置高亮数据
+     * @param data { "historyNodeNames": [], "historyEdgeNames": [], "activeNodeNames": []}
+     */
+    setHighLight (data) {
+      // 设置历史节点
+      if ((data && data.historyNodeNames) || data.historyNodeNames.length) {
+        data.historyNodeNames.forEach(nodeName => {
+          this.lf.setProperties(nodeName, { state: 'history' })
+        })
+      }
+      // 设置当前节点
+      if ((data && data.activeNodeNames) || data.activeNodeNames.length) {
+        data.activeNodeNames.forEach(nodeName => {
+          this.lf.setProperties(nodeName, { state: 'active' })
+        })
+      }
+      // 设置历史边
+      if ((data && data.historyEdgeNames) || data.historyEdgeNames.length) {
+        data.historyEdgeNames.forEach(edgeName => {
+          const edgeModel = this.lf.getEdgeModelById(edgeName)
+          if (edgeModel) {
+            edgeModel.setProperties({ state: 'history' })
+          }
+        })
+      }
     }
   }
 }
@@ -405,5 +448,13 @@ export default {
   background-size: 35px 30px;
   background-position: center;
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNjQ2NDc3ODk0MjQzIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjI3MDEiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNjk4LjQgNjI5LjI4TDgwNS4zMjggNzM2SDYwOS43NmMtNDYuOTQ0IDAtNzkuODI0LTIxLjA0LTEwNi42MjQtNjguOTEyLTIwLjE2LTM1Ljk4NC03My4zMjgtMTIyLjQ5Ni05OC4wOC0xNjIuNjg4IDI0Ljc1Mi00MC4xNzYgNzcuOTItMTI3LjA0IDk4LjA4LTE2My4wMDhDNTI5LjkyIDI5My41MzYgNTYyLjgxNiAyNzIgNjA5Ljc2IDI3MmgxOTUuODA4bC0xMDcuMTg0IDEwNy40NCA1Ni41NzYgNTYuNjg4IDIwMy42NDgtMjAzLjU4NEw3NTQuOTYgMjguOTZsLTU2LjU3NiA1Ni4zMkw4MDUuMzQ0IDE5Mkg2MDkuNzZjLTc2LjE0NCAwLTEzNS41MDQgMzcuMDI0LTE3Ni40MzIgMTEwLjA4LTE5LjQ3MiAzNC44LTczLjYxNiAxMjkuOTItOTcuNiAxNjEuOTJINDguMjA4bC0wLjE0NCA4MGgyODcuNjMyYzI0IDMyIDc4LjE0NCAxMjcuMTA0IDk3LjYzMiAxNjEuOTJDNDc0LjI0IDc3OC45NiA1MzMuNiA4MTYgNjA5Ljc2IDgxNmgxOTUuODA4bC0xMDcuMTg0IDEwNy40NCA1Ni41NzYgNTYuNjg4IDIwMy42NDgtMjAzLjU4NC0yMDMuNjQ4LTIwMy43MjgtNTYuNTc2IDU2LjQ4eiIgZmlsbD0iIzFCN0ZGRiIgcC1pZD0iMjcwMiI+PC9wYXRoPjwvc3ZnPg==');
+}
+.lf-control-setting {
+  width: 70px;
+  height: 55px;
+  background-repeat: no-repeat;
+  background-size: 35px 30px;
+  background-position: center;
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNjQ5MDcyOTQyMTY5IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjQ5MzQiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj5AZm9udC1mYWNlIHsgZm9udC1mYW1pbHk6IGZlZWRiYWNrLWljb25mb250OyBzcmM6IHVybCgiLy9hdC5hbGljZG4uY29tL3QvZm9udF8xMDMxMTU4X3U2OXc4eWh4ZHUud29mZjI/dD0xNjMwMDMzNzU5OTQ0IikgZm9ybWF0KCJ3b2ZmMiIpLCB1cmwoIi8vYXQuYWxpY2RuLmNvbS90L2ZvbnRfMTAzMTE1OF91Njl3OHloeGR1LndvZmY/dD0xNjMwMDMzNzU5OTQ0IikgZm9ybWF0KCJ3b2ZmIiksIHVybCgiLy9hdC5hbGljZG4uY29tL3QvZm9udF8xMDMxMTU4X3U2OXc4eWh4ZHUudHRmP3Q9MTYzMDAzMzc1OTk0NCIpIGZvcm1hdCgidHJ1ZXR5cGUiKTsgfQo8L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNOTY3LjEgNDI2LjZsNTAuOS02Ny41Yy0xMC42LTM1LjYtMjQuNy02OS42LTQyLjItMTAxLjdsLTgzLjctMTEuOEM4MzEgMjM3LjEgNzgyLjkgMTg5IDc3NC4zIDEyNy44bC0xMS44LTgzLjdjLTMyLTE3LjQtNjYuMS0zMS42LTEwMS43LTQyLjJsLTY3LjUgNTAuOWMtMjQuNyAxOC42LTU0IDI3LjktODMuNCAyNy45cy01OC43LTkuMy04My40LTI3LjlMMzU5LjEgMmMtMzUuNiAxMC42LTY5LjYgMjQuNy0xMDEuNyA0Mi4ybC0xMS44IDgzLjdDMjM3LjEgMTg5IDE4OSAyMzcuMSAxMjcuOCAyNDUuN2wtODMuNyAxMS44Yy0xNy40IDMyLTMxLjYgNjYuMS00Mi4yIDEwMS43bDUwLjkgNjcuNUM5MCA0NzYgOTAgNTQ0IDUyLjkgNTkzLjRMMiA2NjAuOWMxMC42IDM1LjYgMjQuNyA2OS42IDQyLjIgMTAxLjdsODMuNyAxMS44YzYxLjIgOC42IDEwOS4zIDU2LjcgMTE3LjkgMTE3LjlsMTEuOCA4My43YzMyIDE3LjQgNjYuMSAzMS42IDEwMS43IDQyLjJsNjcuNS01MC45YzI0LjctMTguNiA1NC0yNy45IDgzLjQtMjcuOXM1OC43IDkuMyA4My40IDI3LjlsNjcuNSA1MC45YzM1LjYtMTAuNiA2OS42LTI0LjcgMTAxLjctNDIuMmwxMS44LTgzLjdjOC42LTYxLjIgNTYuNy0xMDkuMyAxMTcuOS0xMTcuOWw4My43LTExLjhjMTcuNC0zMiAzMS42LTY2LjEgNDIuMi0xMDEuN2wtNTAuOS02Ny41QzkzMCA1NDQgOTMwIDQ3NiA5NjcuMSA0MjYuNnpNNTExLjUgNzEwQzQwMS45IDcxMCAzMTMgNjIxLjEgMzEzIDUxMS41UzQwMS45IDMxMyA1MTEuNSAzMTMgNzEwIDQwMS45IDcxMCA1MTEuNSA2MjEuMSA3MTAgNTExLjUgNzEweiIgcC1pZD0iNDkzNSI+PC9wYXRoPjwvc3ZnPg==');
 }
 </style>
