@@ -55,15 +55,23 @@
       <el-card>
         <div slot="header" class="clearfix">
           <span>扩展属性</span>
-          <el-button style="float: right; padding: 3px 0" type="text" @click="handleAddFieldAttr">添加</el-button>
+          <el-dropdown @command="handleCommand" style="float: right; padding: 3px 0">
+            <el-button type="text">添加<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item :key="item.name" v-for="item in dropdownData" :command="item.name">
+                {{item.label}}
+              </el-dropdown-item>
+          </el-dropdown-menu>
+          </el-dropdown>
         </div>
         <div>
          <el-row v-for="item in attrList" :key="item.key" style="margin-bottom: 12px;">
            <el-col :span="10" style="height: 32px;display: flex;align-items: center;position: relative;z-index: 99999;">
-             <div @click="handleDbClick(item.key)">
-               <el-input :ref="item.key" v-model="attrKey" size="small" v-if="attrKey && attrKey==item.key" @blur="handleAttrKeyBlur"/>
-               <span v-else>{{item.key}}</span>
-             </div>
+             <span>{{getLabel(item.key)}}&nbsp;
+               <el-tooltip :content="getTooltip(item.key)">
+                <i class="el-icon-info"></i>
+               </el-tooltip>
+             </span>
            </el-col>
            <el-col :span="12">
              <el-input v-model="field[item.key]" size="small"></el-input>
@@ -92,7 +100,51 @@ export default {
     return {
       form: this.value,
       attrKey: '',
-      field: this.value.field || {}
+      field: this.value.field || {},
+      dropdownData: [
+        {
+          label: '角色标识',
+          name: 'roleKey',
+          icon: '',
+          tips: '参与者处理类可根据角色标识获取参与者'
+        },
+        {
+          label: '用户标识',
+          name: 'userKey',
+          icon: '',
+          tips: '参与者处理类可根据用户标识获取参与者'
+        },
+        {
+          label: '候选人',
+          name: 'candidate',
+          icon: '',
+          tips: '候选人值'
+        },
+        {
+          label: '候选人处理类',
+          name: 'candidateHandler',
+          icon: '',
+          tips: '获取候选人的处理类'
+        },
+        {
+          label: '额外属性1',
+          name: 'attr1',
+          icon: '',
+          tips: '其他扩展属性'
+        },
+        {
+          label: '额外属性2',
+          name: 'attr2',
+          icon: '',
+          tips: '其他扩展属性'
+        },
+        {
+          label: '额外属性3',
+          name: 'attr3',
+          icon: '',
+          tips: '其他扩展属性'
+        }
+      ]
     }
   },
   computed: {
@@ -123,20 +175,29 @@ export default {
     }
   },
   methods: {
-    handleAddFieldAttr () {
-      this.$set(this.field, 'attr' + (this.attrList.length + 1), '')
+    handleCommand (command) {
+      this.$set(this.field, command, '')
     },
     handleRemoveFieldAttr (key) {
       this.$delete(this.field, key)
     },
-    handleDbClick (key) {
-      this.attrKey = key
-      this.$nextTick(() => {
-        this.$refs[key][0].focus()
+    getLabel (name) {
+      const res = this.dropdownData.find(item => {
+        return item.name === name
       })
+      if (res) {
+        return res.label
+      }
+      return ''
     },
-    handleAttrKeyBlur () {
-      this.attrKey = ''
+    getTooltip (name) {
+      const res = this.dropdownData.find(item => {
+        return item.name === name
+      })
+      if (res) {
+        return res.tips || res.label
+      }
+      return ''
     }
   }
 }
