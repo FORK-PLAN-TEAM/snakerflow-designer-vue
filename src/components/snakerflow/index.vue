@@ -69,6 +69,13 @@ export default {
     viewer: { // 预览模式
       type: Boolean,
       default: false
+    },
+    highLight: {
+      type: Object,
+      default () {
+        return {
+        }
+      }
     }
   },
   data () {
@@ -100,6 +107,12 @@ export default {
           delete n.type
           this.$emit('input', n)
         }
+      },
+      deep: true
+    },
+    highLight: {
+      handler (n) {
+        this.setHighLight(n)
       },
       deep: true
     }
@@ -383,6 +396,7 @@ export default {
      * @param data { "historyNodeNames": [], "historyEdgeNames": [], "activeNodeNames": []}
      */
     setHighLight (data) {
+      if (!this.lf || !data) return
       // 设置历史节点
       if ((data && data.historyNodeNames) || data.historyNodeNames.length) {
         data.historyNodeNames.forEach(nodeName => {
