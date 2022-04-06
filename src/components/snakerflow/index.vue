@@ -12,6 +12,14 @@
         <span slot="footer" class="dialog-footer" v-if="dialogType=='ImportData' || dialogType=='HighLightData'">
             <el-button @click="handleClose">取 消</el-button>
             <el-button type="primary" @click="handleSubmit">确 定</el-button>
+            <el-dropdown placement="top" trigger="click" style="float: left;" v-if="localStorageLfData.length" @command="handleCommand">
+              <el-button type="text">选择<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item :key="item.value" v-for="item in localStorageLfData" :command="item.value">
+                  {{item.label}}&nbsp;&nbsp;<i class="el-icon-remove" @click="handleRemove(item.value)"></i>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
         </span>
         <span slot="footer" class="dialog-footer" v-if="dialogType=='DataDetail'">
             <el-button type="primary" class="m-btn-copy" :data-clipboard-text="copyJsonContent">复制JSON</el-button>
@@ -87,7 +95,8 @@ export default {
       dialogType: 'DataDetail',
       graphData: {},
       clipboard: null,
-      processForm: {}
+      processForm: {},
+      refreshLfData: 1
     }
   },
   watch: {
@@ -135,6 +144,21 @@ export default {
         })
       }
       return ''
+    },
+    localStorageLfData () {
+      const res = []
+      if (this.dialogType === 'ImportData' && [1, 2].includes(this.refreshLfData)) {
+        Object.keys(window.localStorage).forEach(key => {
+          if (key.startsWith('LFDATA###')) {
+            const arr = key.split('###')
+            res.push({
+              value: key,
+              label: arr[2]
+            })
+          }
+        })
+      }
+      return res
     }
   },
   mounted () {
@@ -417,6 +441,17 @@ export default {
             edgeModel.setProperties({ state: 'history' })
           }
         })
+      }
+    },
+    handleCommand (key) {
+      this.$refs.dialogComponent.graphJsonStr = window.localStorage.getItem(key)
+    },
+    handleRemove (key) {
+      window.localStorage.removeItem(key)
+      if (this.refreshLfData === 1) {
+        this.refreshLfData = 2
+      } else {
+        this.refreshLfData = 1
       }
     }
   }

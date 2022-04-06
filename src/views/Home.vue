@@ -54,6 +54,16 @@ export default {
       } else {
         this.$message.success('保存本地成功')
         window.localStorage.setItem('LFDATA', JSON.stringify(data.json))
+        if (data.json.name && data.json.displayName) {
+          // 以一定规则存入，方便选择导入
+          window.localStorage.setItem(`LFDATA###${data.json.name}###${data.json.displayName}`, JSON.stringify(data.json))
+          // 触发更新
+          if (this.$refs.designer.refreshLfData === 1) {
+            this.$refs.designer.refreshLfData = 2
+          } else {
+            this.$refs.designer.refreshLfData = 1
+          }
+        }
       }
     }
   }
