@@ -103,22 +103,28 @@ export default {
       field: this.value.field || {},
       dropdownData: [
         {
-          label: '角色标识',
-          name: 'roleKey',
-          icon: '',
-          tips: '参与者处理类可根据角色标识获取参与者'
-        },
-        {
           label: '用户标识',
           name: 'userKey',
           icon: '',
           tips: '参与者处理类可根据用户标识获取参与者'
         },
         {
-          label: '候选人',
-          name: 'candidate',
+          label: '用户组标识',
+          name: 'groupKey',
           icon: '',
-          tips: '候选人值'
+          tips: '参与者处理类可根据用户组标识获取参与者'
+        },
+        {
+          label: '候选用户',
+          name: 'candidateUsers',
+          icon: '',
+          tips: '候选用户值'
+        },
+        {
+          label: '候选用户组',
+          name: 'candidateGroups',
+          icon: '',
+          tips: '候选用户组'
         },
         {
           label: '候选人处理类',
