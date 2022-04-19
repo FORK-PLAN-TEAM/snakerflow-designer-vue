@@ -118,13 +118,13 @@ export default {
           label: '候选用户',
           name: 'candidateUsers',
           icon: '',
-          tips: '候选用户值'
+          tips: '候选用户(提供给上一节点选择下一节点参与者的用户标识)'
         },
         {
           label: '候选用户组',
           name: 'candidateGroups',
           icon: '',
-          tips: '候选用户组'
+          tips: '候选用户组(提供给上一节点选择下一节点参与者的用户组标识)'
         },
         {
           label: '候选人处理类',
