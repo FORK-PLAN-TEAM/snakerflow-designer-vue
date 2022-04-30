@@ -16,7 +16,6 @@
     "url": "https://gitee.com/mldong/snakerflow-designer-vue/issues"
   },
   "dependencies": {
-    "@antv/g6": "^4.5.3",
     "@logicflow/core": "^1.1.3",
     "@logicflow/extension": "^1.1.3",
     "clipboard": "^2.0.10",
