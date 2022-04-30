@@ -1,6 +1,7 @@
 {
   "name": "snakerflow-designer-vue",
-  "version": "1.0.2",
+  "version": "1.0.3",
+  "main": "lib/SnakerflowDesigner.umd.min.js",
   "private": false,
   "scripts": {
     "lib": "vue-cli-service build --target lib --name SnakerflowDesigner --dest lib packages/index.js",
