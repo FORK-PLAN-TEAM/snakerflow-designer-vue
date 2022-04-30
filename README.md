@@ -5,7 +5,15 @@
 
 [只读模式] (https://snaker.mldong.com/preview)
 
-[高亮模式] (https://snaker.mldong.com/about)
+[高亮模式] (https://snaker.mldong.com/highLight)
+
+[xml数据] (https://snaker.mldong.com/xml)
+
+# 使用案例
+[后端工程] (https://gitee.com/mldong/mldong)
+
+[前端工程] (https://gitee.com/mldong/mldong-vue)
+
 # 如何使用
 ## 安装
 ```
@@ -55,7 +63,12 @@ https://gitee.com/mldong/snakerflow-designer-vue/blob/master/src/views/Home.vue
 ```
 ### 高亮模式
 ```
-// https://gitee.com/mldong/snakerflow-designer-vue/blob/master/src/views/About.vue
+// https://gitee.com/mldong/snakerflow-designer-vue/blob/master/src/views/highLight.vue
+<SnakerFlowDesigner :viewer="true" ref='designer' v-model="flowData"/>
+```
+### XML数据
+```
+// https://gitee.com/mldong/snakerflow-designer-vue/blob/master/src/views/xml.vue
 <SnakerFlowDesigner :viewer="true" ref='designer' v-model="flowData"/>
 ```
 # 本地演示

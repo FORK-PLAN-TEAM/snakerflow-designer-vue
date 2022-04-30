@@ -61,7 +61,7 @@ export default {
   },
   props: {
     value: {
-      type: Object,
+      type: [String, Object],
       default () {
         return {}
       }
@@ -130,7 +130,7 @@ export default {
     copyJsonContent () {
       if (this.dialogType === 'DataDetail' && this.lf) {
         return JSON.stringify({
-          ...this.value,
+          ...this.tranData(this.value),
           ...this.lf.getGraphData()
         }, null, 2)
       }
@@ -139,7 +139,7 @@ export default {
     copyXmlContent () {
       if (this.dialogType === 'DataDetail' && this.lf) {
         return logicFlowJsonToSnakerXml({
-          ...this.value,
+          ...this.tranData(this.value),
           ...this.lf.getGraphData()
         })
       }
@@ -163,9 +163,9 @@ export default {
   },
   mounted () {
     this.init()
-    if (this.value) {
-      this.initProcessForm(this.value)
-      this.lf.render(this.value)
+    if (this.tranData(this.value)) {
+      this.initProcessForm(this.tranData(this.value))
+      this.lf.render(this.tranData(this.value))
       this.setHighLight(this.highLight)
     }
     this.clipboard = new Clipboard('.m-btn-copy')
@@ -179,6 +179,12 @@ export default {
     })
   },
   methods: {
+    tranData (n) {
+      if (typeof n === 'string') {
+        return snakerXml2LogicFlowJson(n)
+      }
+      return n
+    },
     /**
      * 初始化流程定义表单信息
      */
@@ -298,7 +304,7 @@ export default {
         text: '查看',
         onClick: (lf, ev) => {
           this.graphData = {
-            ...this.value,
+            ...this.tranData(this.value),
             ...lf.getGraphData()
           }
           this.$nextTick(() => {
@@ -339,7 +345,7 @@ export default {
           this.graphData = lf.getGraphData()
           this.$nextTick(() => {
             const res = {
-              ...this.value,
+              ...this.tranData(this.value),
               ...this.graphData
             }
             this.$emit('on-save', {
@@ -423,19 +429,19 @@ export default {
     setHighLight (data) {
       if (!this.lf || !data) return
       // 设置历史节点
-      if ((data && data.historyNodeNames) || data.historyNodeNames.length) {
+      if (data && data.historyNodeNames) {
         data.historyNodeNames.forEach(nodeName => {
           this.lf.setProperties(nodeName, { state: 'history' })
         })
       }
       // 设置当前节点
-      if ((data && data.activeNodeNames) || data.activeNodeNames.length) {
+      if (data && data.activeNodeNames) {
         data.activeNodeNames.forEach(nodeName => {
           this.lf.setProperties(nodeName, { state: 'active' })
         })
       }
       // 设置历史边
-      if ((data && data.historyEdgeNames) || data.historyEdgeNames.length) {
+      if (data && data.historyEdgeNames) {
         data.historyEdgeNames.forEach(edgeName => {
           const edgeModel = this.lf.getEdgeModelById(edgeName)
           if (edgeModel) {
