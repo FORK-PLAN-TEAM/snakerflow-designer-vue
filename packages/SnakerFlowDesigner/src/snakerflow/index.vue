@@ -63,7 +63,7 @@ export default {
     value: {
       type: [String, Object],
       default () {
-        return {}
+        return undefined
       }
     },
     config: {
@@ -102,10 +102,13 @@ export default {
   watch: {
     value: {
       handler (n) {
-        if (n && n.nodes && this.lf) {
+        if (n && this.lf) {
           // this.init()
-          this.initProcessForm(n)
-          this.lf.render(n)
+          const value = this.tranData(n)
+          this.initProcessForm(value)
+          if (value.nodes) {
+            this.lf.render(value)
+          }
         }
       },
       deep: true
