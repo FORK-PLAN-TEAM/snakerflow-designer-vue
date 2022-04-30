@@ -5,13 +5,9 @@
 </template>
 
 <script>
-import SnakerFlowDesigner from '@/components/snakerflow/index'
-const demoData = require('@/components/snakerflow/data.json').data
+const demoData = require('../assets/data.json')
 export default {
   name: 'Home',
-  components: {
-    SnakerFlowDesigner
-  },
   data () {
     return {
       flowData: window.localStorage.getItem('LFDATA') ? JSON.parse(window.localStorage.getItem('LFDATA')) : demoData,

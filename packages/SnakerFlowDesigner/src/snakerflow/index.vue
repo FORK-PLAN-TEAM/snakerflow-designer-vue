@@ -32,15 +32,15 @@
 <script>
 // @ is an alias to /src
 import LogicFlow from '@logicflow/core'
-import Task from '@/components/snakerflow/task'
-import Transition from '@/components/snakerflow/transition'
-import Custom from '@/components/snakerflow/custom'
-import Start from '@/components/snakerflow/start'
-import End from '@/components/snakerflow/end'
-import Decision from '@/components/snakerflow/decision'
-import Join from '@/components/snakerflow/join'
-import Fork from '@/components/snakerflow/fork'
-import PropertySetting from '@/components/PropertySetting'
+import Task from './task'
+import Transition from './transition'
+import Custom from './custom'
+import Start from './start'
+import End from './end'
+import Decision from './decision'
+import Join from './join'
+import Fork from './fork'
+import PropertySetting from '../PropertySetting'
 import DataDetail from './control/DataDetail.vue'
 import ImportData from './control/ImportData.vue'
 import HighLightData from './control/HighLightData.vue'
@@ -48,7 +48,7 @@ import HighLightData from './control/HighLightData.vue'
 import { Snapshot, DndPanel, SelectionSelect, Menu, Control } from '@logicflow/extension'
 import '@logicflow/core/dist/style/index.css'
 import '@logicflow/extension/lib/style/index.css'
-import { snakerXml2LogicFlowJson, logicFlowJsonToSnakerXml } from '@/components/snakerflow/tool'
+import { snakerXml2LogicFlowJson, logicFlowJsonToSnakerXml } from './tool'
 import Clipboard from 'clipboard'
 import { Message } from 'element-ui'
 export default {
@@ -166,6 +166,7 @@ export default {
     if (this.value) {
       this.initProcessForm(this.value)
       this.lf.render(this.value)
+      this.setHighLight(this.highLight)
     }
     this.clipboard = new Clipboard('.m-btn-copy')
     this.clipboard.on('success', function (e) {

@@ -1,6 +1,64 @@
 # snaker工作流引擎web设计器
 [在线体验] (https://snaker.mldong.com/)
-# 构建
+
+[编辑模式] (https://snaker.mldong.com/)
+
+[只读模式] (https://snaker.mldong.com/preview)
+
+[高亮模式] (https://snaker.mldong.com/about)
+# 如何使用
+## 安装
+```
+npm install snakerflow-designer-vue@latest --save
+```
+## 其他依赖
+设计器依赖于以下第三方库，工程中没有的，请自行安装。
+```
+npm install @logicflow/core@^1.1.3 --save
+npm install @logicflow/extension@^1.1.3 --save
+npm install clipboard@^2.0.10 --save
+npm install element-ui@^2.15.6 --save
+npm install vue-json-pretty@^1.8.2 --save
+```
+## 引入
+```
+import Vue from 'vue'
+import App from './App.vue'
+import router from './router'
+import store from './store'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+// 导入组件库
+import SnakerFlowDesigner from 'snakerflow-designer-vue'
+Vue.config.productionTip = false
+Vue.use(ElementUI)
+// 注册组件库
+Vue.use(SnakerFlowDesigner)
+new Vue({
+  router,
+  store,
+  render: h => h(App)
+}).$mount('#app')
+
+```
+## 样例
+### 编辑模式
+```
+https://gitee.com/mldong/snakerflow-designer-vue/blob/master/src/views/Home.vue
+<SnakerFlowDesigner ref='designer' v-model="flowData" @on-save="handleSave"/>
+
+```
+### 只读模式
+```
+// https://gitee.com/mldong/snakerflow-designer-vue/blob/master/src/views/Preview.vue
+<SnakerFlowDesigner :viewer="true" ref='designer' v-model="flowData"/>
+```
+### 高亮模式
+```
+// https://gitee.com/mldong/snakerflow-designer-vue/blob/master/src/views/About.vue
+<SnakerFlowDesigner :viewer="true" ref='designer' v-model="flowData"/>
+```
+# 本地演示
 ## 安装
 ```
 npm install
@@ -42,7 +100,7 @@ npm run lint
       }
     },
     {
-      "id": "applly",
+      "id": "apply",
       "type": "snaker:task",
       "x": 520,
       "y": 160,
@@ -119,7 +177,7 @@ npm run lint
       "id": "3037be41-5682-4344-b94a-9faf5c3e62ba",
       "type": "snaker:transition",
       "sourceNodeId": "start",
-      "targetNodeId": "applly",
+      "targetNodeId": "apply",
       "startPoint": {
         "x": 358,
         "y": 160
@@ -143,7 +201,7 @@ npm run lint
     {
       "id": "c79642ae-9f28-4213-8cdf-0e0d6467b1b9",
       "type": "snaker:transition",
-      "sourceNodeId": "applly",
+      "sourceNodeId": "apply",
       "targetNodeId": "approveDept",
       "startPoint": {
         "x": 580,
@@ -307,7 +365,7 @@ npm run lint
 {
     "historyNodeNames": [
         "start",
-        "applly"
+        "apply"
     ],
     "historyEdgeNames": [
         "3037be41-5682-4344-b94a-9faf5c3e62ba",
@@ -318,24 +376,6 @@ npm run lint
     ]
 }
 ```
-# 截图
-![1](./doc/images/1.png)
-
-![2](./doc/images/2.png)
-
-![3](./doc/images/3.png)
-
-![4](./doc/images/4.png)
-
-![5](./doc/images/5.png)
-
-![6](./doc/images/6.png)
-
-![7](./doc/images/7.png)
-
-![8](./doc/images/7.png)
-
-![9](./doc/images/7.png)
 
 # 相关资料
 [LogicFlow] (http://logic-flow.org/)

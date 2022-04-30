@@ -14,7 +14,7 @@
 <script>
 import VueJsonPretty from 'vue-json-pretty'
 import 'vue-json-pretty/lib/styles.css'
-import { logicFlowJsonToSnakerXml } from '@/components/snakerflow/tool'
+import { logicFlowJsonToSnakerXml } from '../tool'
 export default {
   components: {
     VueJsonPretty

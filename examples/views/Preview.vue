@@ -4,12 +4,8 @@
   </div>
 </template>
 <script>
-import SnakerFlowDesigner from '@/components/snakerflow/index'
-const demoData = require('@/components/snakerflow/data.json').data
+const demoData = require('../assets/data.json')
 export default {
-  components: {
-    SnakerFlowDesigner
-  },
   data () {
     return {
       flowData: demoData
