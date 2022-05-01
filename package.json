@@ -1,13 +1,14 @@
 {
   "name": "snakerflow-designer-vue",
-  "version": "1.1.3",
+  "version": "1.0.0",
   "main": "lib/SnakerflowDesigner.umd.min.js",
   "private": false,
   "scripts": {
     "lib": "vue-cli-service build --target lib --name SnakerflowDesigner --dest lib packages/index.js",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "publish": "npm run lib && npm publish"
   },
   "author": "mldong",
   "license": "Apache License 2.0",
@@ -15,6 +16,16 @@
   "bugs": {
     "url": "https://gitee.com/mldong/snakerflow-designer-vue/issues"
   },
+  "keywords": [
+    "工作流",
+    "流程设计器",
+    "Web流程设计器",
+    "Snaker",
+    "SnakerFlow",
+    "Vue2",
+    "LogicFlow",
+    "ElementUI"
+  ],
   "dependencies": {
     "@logicflow/core": "^1.1.3",
     "@logicflow/extension": "^1.1.3",

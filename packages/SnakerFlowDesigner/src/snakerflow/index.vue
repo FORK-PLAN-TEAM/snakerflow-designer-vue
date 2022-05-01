@@ -40,7 +40,7 @@ import End from './end'
 import Decision from './decision'
 import Join from './join'
 import Fork from './fork'
-import PropertySetting from '../PropertySetting'
+import PropertySetting from '../PropertySetting/index.vue'
 import DataDetail from './control/DataDetail.vue'
 import ImportData from './control/ImportData.vue'
 import HighLightData from './control/HighLightData.vue'
@@ -413,6 +413,7 @@ export default {
      * 导入snakerxml
      */
     importXml (xml) {
+      if (!xml) return
       const data = snakerXml2LogicFlowJson(xml)
       this.initProcessForm(data)
       this.lf.render(data)
@@ -421,7 +422,11 @@ export default {
      * 导入jsonstr
      */
     importJson (jsonStr) {
-      const data = JSON.parse(jsonStr)
+      if (!jsonStr) return
+      let data = jsonStr
+      if (typeof jsonStr === 'string') {
+        data = JSON.parse(jsonStr)
+      }
       this.initProcessForm(data)
       this.lf.render(data)
     },
