@@ -69,7 +69,7 @@ new Vue({
 ### 高亮模式
 ```html
 <!-- https://gitee.com/mldong/snakerflow-designer-vue/blob/master/examples/views/HighLight.vue -->
-<SnakerFlowDesigner :viewer="true" ref='designer' v-model="flowData"/>
+<SnakerFlowDesigner :viewer="true" ref='designer' v-model="flowData" :high-light="highLight"/>
 ```
 ### XML数据
 ```html
