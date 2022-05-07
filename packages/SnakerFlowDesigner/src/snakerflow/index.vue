@@ -474,14 +474,13 @@ export default {
 </script>
 <style scoped>
 .m-snakerflow-designer {
-  height: 100vh;
+  height: 100%;
   position: relative;
 }
 #LF-view{
-  width: calc(100% - 100px);
-  height: 80%;
+  width: 100%;
+  height: 100%;
   outline: none;
-  margin-left: 50px;
 }
 </style>
 <style>
