@@ -173,6 +173,12 @@ export default {
       },
       deep: true
     },
+    value: {
+      handler (n) {
+        this.form = n
+      },
+      deep: true
+    },
     field: {
       handler (n) {
         this.$set(this.form, 'field', JSON.parse(JSON.stringify(this.field)))
