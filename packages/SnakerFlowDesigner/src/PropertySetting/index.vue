@@ -98,11 +98,17 @@ export default {
       } else {
         if (n && o) {
           if (['snaker:transition'].includes(this.node.type)) {
-            this.lf.changeEdgeId(o, n)
+            if (!this.lf.getEdgeModelById(n)) {
+              this.lf.changeEdgeId(o, n)
+            }
           } else if (['snaker:decision'].includes(this.node.type)) {
-            this.lf.changeNodeId(o, n)
+            if (!this.lf.getNodeModelById(n)) {
+              this.lf.changeNodeId(o, n)
+            }
           } else {
-            this.lf.changeNodeId(o, n)
+            if (!this.lf.getNodeModelById(n)) {
+              this.lf.changeNodeId(o, n)
+            }
           }
           this.nodeId = n
         }
