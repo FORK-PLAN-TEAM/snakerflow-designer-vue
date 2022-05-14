@@ -7,6 +7,7 @@
         :visible.sync="dialogVisible"
         destroy-on-close
         width="60%"
+        :append-to-body="true"
         :before-close="handleClose">
         <component :is="dialogType" :graphData="graphData" ref="dialogComponent"></component>
         <span slot="footer" class="dialog-footer" v-if="dialogType=='ImportData' || dialogType=='HighLightData'">
