@@ -1,7 +1,7 @@
 <template>
   <div class="m-snakerflow-designer">
     <div id="LF-view"></div>
-    <PropertySetting ref="propertySetting" :node="nodeClick" v-model="processForm" :lf="lf"/>
+    <PropertySetting ref="propertySetting" :extendAttrConfig="extendAttrConfig" :node="nodeClick" v-model="processForm" :lf="lf"/>
     <el-dialog
         :title="dialogTitle"
         :visible.sync="dialogVisible"
@@ -79,12 +79,15 @@ export default {
       type: Boolean,
       default: false
     },
-    highLight: {
+    highLight: { // 高亮数据
       type: Object,
       default () {
         return {
         }
       }
+    },
+    extendAttrConfig: { // 扩展属性配置
+      type: Object
     }
   },
   data () {

@@ -83,12 +83,53 @@ new Vue({
 | config	  | LogicFlow配置 | object  |--  |--  |
 | viewer	  | 是否预览模式 | boolean  | true/false |false  |
 | highLight	  | 高亮数据，具体见下表 | object  | -- | --  |
+| extendAttrConfig	  | 扩展属性配置，具体见下表 | object  | -- | --  |
 ### highLight
 |  参数   | 说明  | 类型  |可选值  |默认值  |
 |  ----  | ----  | ----  | ----  |----  |
 | historyNodeNames	  | 历史节点名称 | array  |--  |--  |
 | historyEdgeNames	  | 历史边名称 | array  |--  |--  |
 | activeNodeNames	  | 活跃节点名称 | array  |--  |--  |
+### extendAttrConfig
+#### 样例数据
+``` json
+{
+  "items": [
+    {
+      "label": "用户标识",
+      "name": "userKey",
+      "icon": "",
+      "tips": "参与者处理类可根据用户标识获取参与者"
+    },
+    {
+      "label": "用户组标识",
+      "name": "groupKey",
+      "icon": "",
+      "tips": "参与者处理类可根据用户组标识获取参与者"
+    }
+  ]
+}
+```
+#### 说明
+|  参数   | 说明  | 类型  |必填  |默认值  |
+|  ----  | ----  | ----  | ----  |----  |
+| label	  | 显示名称 | string  | 是 |--  |
+| name	  | 名称 | string  |  是|--  |
+| icon	  | 图标 | string  |  否|--  |
+| tips	  | 提示语 | string  | 否|--  |
+
+#### 默认配置
+
+|  显示名称   | 名称  | 图标  |提示语  |
+|  ----  | ----  | ----  | ----  |
+| 用户标识	  | userKey | --  | 参与者处理类可根据用户标识获取参与者 |
+| 用户组标识	  | groupKey | --  | 参与者处理类可根据用户组标识获取参与者 |
+| 候选用户	  | candidateUsers | --  | 候选用户(提供给上一节点选择下一节点参与者的用户标识) |
+| 候选用户组	  | candidateGroups | --  | 候选用户组(提供给上一节点选择下一节点参与者的用户组标识) |
+| 候选人处理类	  | candidateHandler | --  | 获取候选人的处理类 |
+| 额外属性1	  | attr1 | --  | 其他扩展属性1 |
+| 额外属性2	  | attr2 | --  | 其他扩展属性2 |
+| 额外属性3	  | attr3 | --  | 其他扩展属性3 |
 ## 方法
 |  方法名   | 说明  | 参数  |
 |  ----  | ----  | ----  |

@@ -58,7 +58,7 @@
           <el-dropdown @command="handleCommand" style="float: right; padding: 3px 0">
             <el-button type="text">添加<i class="el-icon-arrow-down el-icon--right"></i></el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item :key="item.name" v-for="item in dropdownData" :command="item.name">
+              <el-dropdown-item :icon="item.icon" :key="item.name" v-for="item in dropdownData" :command="item.name">
                 {{item.label}}
               </el-dropdown-item>
           </el-dropdown-menu>
@@ -94,6 +94,9 @@ export default {
       default () {
         return {}
       }
+    },
+    extendAttrConfig: { // 扩展属性配置
+      type: Object
     }
   },
   data () {
@@ -101,7 +104,7 @@ export default {
       form: this.value,
       attrKey: '',
       field: this.value.field || {},
-      dropdownData: [
+      mDropdownData: [
         {
           label: '用户标识',
           name: 'userKey',
@@ -136,19 +139,19 @@ export default {
           label: '额外属性1',
           name: 'attr1',
           icon: '',
-          tips: '其他扩展属性'
+          tips: '其他扩展属性1'
         },
         {
           label: '额外属性2',
           name: 'attr2',
           icon: '',
-          tips: '其他扩展属性'
+          tips: '其他扩展属性2'
         },
         {
           label: '额外属性3',
           name: 'attr3',
           icon: '',
-          tips: '其他扩展属性'
+          tips: '其他扩展属性3'
         }
       ]
     }
@@ -164,6 +167,12 @@ export default {
           value: this.field[key]
         }
       })
+    },
+    dropdownData () {
+      if (!this.extendAttrConfig || !this.extendAttrConfig.items || !this.extendAttrConfig.items.length) {
+        return this.mDropdownData
+      }
+      return this.extendAttrConfig.items
     }
   },
   watch: {

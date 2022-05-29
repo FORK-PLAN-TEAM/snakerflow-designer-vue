@@ -8,7 +8,7 @@
         direction="rtl"
         :append-to-body="true"
         :before-close="handleClose">
-        <component :is="node?node.type.replace('snaker:','snaker-'):''" v-model="form"></component>
+        <component :is="node?node.type.replace('snaker:','snaker-'):''" v-model="form" :extendAttrConfig="extendAttrConfig"></component>
         </el-drawer>
   </div>
 </template>
@@ -54,6 +54,9 @@ export default {
       default () {
         return null
       }
+    },
+    extendAttrConfig: { // 扩展属性配置
+      type: Object
     }
   },
   data () {
