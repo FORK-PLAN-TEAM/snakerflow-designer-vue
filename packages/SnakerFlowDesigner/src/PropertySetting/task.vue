@@ -52,6 +52,12 @@
       <el-form-item label="回调处理">
         <el-input v-model="form.callback"></el-input>
       </el-form-item>
+      <el-form-item label="宽度">
+        <el-input-number :step="5" :step-strictly="true" v-model="form.width"></el-input-number>
+      </el-form-item>
+      <el-form-item label="高度">
+        <el-input-number :step="5" :step-strictly="true" v-model="form.height"></el-input-number>
+      </el-form-item>
       <el-card>
         <div slot="header" class="clearfix">
           <span>扩展属性</span>

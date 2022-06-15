@@ -256,6 +256,26 @@ export default {
       this.lf.setProperties(this.nodeId, {
         field: n
       })
+    },
+    'form.width' (n) {
+      // 宽度
+      this.lf.setProperties(this.nodeId, {
+        width: Number.isNaN(n) ? 120 : n
+      })
+      const nodeModel = this.lf.getNodeModelById(this.nodeId)
+      if (nodeModel) {
+        nodeModel.width = Number.isNaN(n) ? 120 : n
+      }
+    },
+    'form.height' (n) {
+      // 高度
+      this.lf.setProperties(this.nodeId, {
+        height: Number.isNaN(n) ? 120 : n
+      })
+      const nodeModel = this.lf.getNodeModelById(this.nodeId)
+      if (nodeModel) {
+        nodeModel.height = Number.isNaN(n) ? 80 : n
+      }
     }
   },
   methods: {
