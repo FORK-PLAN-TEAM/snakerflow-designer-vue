@@ -231,7 +231,14 @@ export default {
       this.initEvent(lf)
     },
     initOp (lf) {
-      if (this.viewer) return
+      if (this.viewer) {
+        // 预览模式时
+        this.lf.extension.menu.setMenuConfig({
+          nodeMenu: [],
+          edgeMenu: []
+        })
+        return
+      }
       // 设置拖拽面板
       this.lf.extension.dndPanel.setPatternItems([
         {
