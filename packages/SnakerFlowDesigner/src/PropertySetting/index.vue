@@ -289,6 +289,11 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+>>> .el-drawer__body {
+    overflow-y: scroll;
+  }
+>>> .el-drawer__container ::-webkit-scrollbar {
+    display: none;
+}
 </style>

@@ -1,6 +1,6 @@
 {
   "name": "snakerflow-designer-vue",
-  "version": "1.1.13",
+  "version": "1.1.14",
   "main": "lib/SnakerflowDesigner.umd.min.js",
   "private": false,
   "scripts": {
